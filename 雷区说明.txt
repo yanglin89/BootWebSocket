@@ -1,0 +1,2 @@
+雷区说明：
+SpringBoot中配置了registry.addViewController("/ws").setViewName("/ws");访问路径后，浏览器中输入的时候必须要在端口号后加上/ws，否则会报404错误。
