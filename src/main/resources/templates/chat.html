@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Home</title>
+<script th:src="@{sockjs.min.js}"></script>
+<script th:src="@{stomp.min.js}"></script>
+<script th:src="@{jquery.js}"></script>
+</head>
+<body>
+
+	<p>聊天室</p>
+	
+	
+	
+	<form id="wiselyForm">
+		<textarea rows="4" cols="60" name="text"></textarea>
+		<input type="submit" />
+	</form>
+	
+	<script th:inline="javascript">
+		$('#wiselyForm').submit(function(e){
+			e.preventDefault();
+			var text = $('#wiselyForm').find('textarea[name="text"]').val();
+			sendSpittle(text);
+		});
+		
+		var sock = new SockJS("/endpointChat");//链接名称为 /endpointChat 的endpoint
+		var stomp = Stomp.over(sock);
+		stomp.connect('guest',function(frame){
+			stomp.subscribe("/user/queue/notifications",handleNotification);//订阅 /user/queue/nofications 发送的消息，这里与控制器的messageTempleteconverAndSendToUser 中定义的地址保持一致，这里对一个 /user ，这个多的 /user 是必须多的，使用了 /user 才会发送消息到指定的用户。
+		});
+		
+		function handleNotification(message){
+			$('#output').append("<b>Received: " + message.body + "</b><br/>")
+		}
+		
+		function sendSpittle(text){
+			stomp.send("/chat",{},text);
+		}
+		
+		$('#stop').click(function(){
+			sock.close()
+		});
+	</script>
+	
+	<div id="output"></div>
+	<!-- stop按钮目前不起作用 -->
+	<div><input type="button" value="断开" id="stop"/></div>
+
+</body>
+</html>
+
+
+
+
+
+

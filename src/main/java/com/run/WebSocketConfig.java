@@ -14,12 +14,13 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry register) {
-		register.addEndpoint("/endpointWisely").withSockJS();
+		register.addEndpoint("/endpointWisely").withSockJS(); //注册一个名为 /endpointWisely 的endpoint
+		register.addEndpoint("/endpointChat").withSockJS();
 	}
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.enableSimpleBroker("/topic");
+		registry.enableSimpleBroker("/queue","/topic"); //广播式配置/topic消息代理；点对点式配置/queue消息代理
 	}
 	
 	
